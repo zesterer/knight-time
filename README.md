@@ -1,5 +1,6 @@
-# knightmare
-A chess game and AI written in Vala
+# Knightmare
+
+A hastily-written chess game, chess frontend and chess AI written in Vala and SFML.
 
 ## Compile
 
@@ -8,3 +9,9 @@ A chess game and AI written in Vala
 ##Run
 
 `make run`
+
+##Trivia
+
+- Compiles on both Linux and OSX
+- Might compile on Windows if you tweak it a bit
+- I'm not good enough at writing makefiles yet to perform the above

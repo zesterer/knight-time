@@ -4,37 +4,64 @@ namespace knightmare
 	{
 		public class Board : Object
 		{
-			public int8[,] data;
+			public int8[,] data = new int8[8, 8];
 			
 			public Board()
 			{
-				this.data = new int8[board_size, board_size];
-				this.setup();
+				this.clear();
 			}
 			
-			public int8 get(int8 x, int8 y)
+			public void clear()
 			{
-				return this.data[x, y];
-			}
-			
-			public void setup()
-			{
-				//Empty the board
-				for (int8 y = 0; y < board_size; y ++)
+				//Clear the board
+				for (int8 y = 0; y < 8; y ++)
 				{
-					for (int8 x = 0; x < board_size; x ++)
+					for (int8 x = 0; x < 8; x ++)
 					{
 						this.data[x, y] = 0x00;
 					}
 				}
+			}
+			
+			public new Board clone()
+			{
+				Board new_board = new Board();
 				
-				//~~~~BLACK PIECES~~~~
+				for (int8 y = 0; y < 8; y ++)
+				{
+					for (int8 x = 0; x < 8; x ++)
+					{
+						new_board.data[x, y] = this.data[x, y];
+					}
+				}
 				
-				//Pawns, top row
-				for (int count = 0; count < board_size; count ++)
+				return new_board;
+			}
+			
+			public bool checkFree(int8 x, int8 y, int8 dx, int8 dy, int8 distance)
+			{
+				for (int8 count = 1; count < distance; count ++)
+				{
+					if (this.data[x + dx * count, y + dy * count] != 0x00)
+					{ //Found something
+						return false;
+					}
+				}
+				
+				//Found nothing, so return true
+				return true;
+			}
+			
+			public void setup()
+			{
+				//Clear the board
+				this.clear();
+				
+				//Black pawns
+				for (int8 count = 0; count < 8; count ++)
 					this.data[count, 1] = 0x01;
 				
-				//Other pieces, top row
+				//Black pieces, top row
 				this.data[0, 0] = 0x02;
 				this.data[1, 0] = 0x03;
 				this.data[2, 0] = 0x04;
@@ -44,35 +71,33 @@ namespace knightmare
 				this.data[6, 0] = 0x03;
 				this.data[7, 0] = 0x02;
 				
-				//~~~~WHITE PIECES~~~~
+				//White pawns
+				for (int8 count = 0; count < 8; count ++)
+					this.data[count, 6] = 0x11;
 				
-				//Pawns, bottom row
-				for (int count = 0; count < board_size; count ++)
-					this.data[count, 6] = 0x07;
-				
-				//Other pieces, bottom row
-				this.data[0, 7] = 0x08;
-				this.data[1, 7] = 0x09;
-				this.data[2, 7] = 0x0A;
-				this.data[3, 7] = 0x0C;
-				this.data[4, 7] = 0x0B;
-				this.data[5, 7] = 0x0A;
-				this.data[6, 7] = 0x09;
-				this.data[7, 7] = 0x08;
+				//White pieces, bottom row
+				this.data[0, 7] = 0x12;
+				this.data[1, 7] = 0x13;
+				this.data[2, 7] = 0x14;
+				this.data[3, 7] = 0x15;
+				this.data[4, 7] = 0x16;
+				this.data[5, 7] = 0x14;
+				this.data[6, 7] = 0x13;
+				this.data[7, 7] = 0x12;
 			}
 			
 			public string termOutput()
 			{
 				string message = "╔════════╗\n";
 				
-				for (int8 y = 0; y < board_size; y ++)
+				for (int8 y = 0; y < 8; y ++)
 				{
 					message += "║";
 					
-					for (int8 x = 0; x < board_size; x ++)
+					for (int8 x = 0; x < 8; x ++)
 					{
-						if (this.data[x, y] > 0x00)
-							message += Piece.pieces[this.data[x, y]].character;
+						if (Piece.kind[this.data[x, y]] != null)
+							message += Piece.kind[this.data[x, y]].getTerminalCharacter();
 						else
 							message += " ";
 					}

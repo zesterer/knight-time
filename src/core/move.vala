@@ -10,80 +10,234 @@ namespace knightmare
 			public int8 to_x;
 			public int8 to_y;
 			
-			public int8 getPiece()
+			public int8 getPieceID()
 			{
 				return this.board.data[this.from_x, this.from_y];
 			}
 			
-			public int8 getTarget()
+			public int8 getTargetID()
 			{
 				return this.board.data[this.to_x, to_y];
+			}
+			
+			public unowned Piece.Piece? getPiece()
+			{
+				return Piece.kind[this.getPieceID()];
+			}
+			
+			public unowned Piece.Piece? getTarget()
+			{
+				return Piece.kind[this.getTargetID()];
+			}
+			
+			public bool isValid()
+			{
+				//Find the pieces we are moving, and the pieces we are moving to
+				unowned Piece.Piece? piece = this.getPiece();
+				unowned Piece.Piece? target = this.getTarget();
+				
+				//Make sure we're actually trying to move a piece
+				if (piece == null)
+					return false;
+				
+				//Find the movement positions
+				int8 fx = this.from_x; //From x - the x position of the piece being moved
+				int8 fy = this.from_y; //From y - the y position of the piece being moved
+				int8 tx = this.to_x; //To x - the x position of the piece being taken
+				int8 ty = this.to_y; //To y - the y position of the piece being taken
+				int8 rx = tx - fx; //Relative change in x position
+				int8 ry = ty - fy; //Relative change in y position
+				int8 dx = (int8)((int)rx).abs(); //Scalar change in x position
+				int8 dy = (int8)((int)ry).abs(); //Scalar change in y position
+				int8 ux = rx.clamp(-1, 1); //Unit change in x position
+				int8 uy = ry.clamp(-1, 1); //Unit change in y position
+				
+				if (fx < 0 || fx > 7 || fy < 0 || fy > 7 || tx < 0 || tx > 7 || ty < 0 || ty > 7)
+				{ //Coordinates are outside the board
+					return false;
+				}
+				
+				if (fx == tx && fy == ty)
+				{ //It's not moved
+					return false;
+				}
+				
+				//The vector multiplier - points in the direction of the piece team
+				int8 vm;
+				if (piece.colour == Piece.Colour.BLACK)
+					vm = 1;
+				else
+					vm = -1;
+				
+				switch(piece.kind)
+				{
+					case (Piece.Kind.PAWN):
+						{
+							if (ry * vm == 1)
+							{ //Moved forward one place
+								if (rx == 0 && target == null)
+								{ //Moved into the cell above
+									return true;
+								}
+								else if (dx == 1 && target != null && target.colour != piece.colour)
+								{//Taking a piece diagonally
+									return true;
+								}
+							}
+							
+							break;
+						}
+					case (Piece.Kind.ROOK):
+						{
+							if (dx == 0 || dy == 0)
+							{ //Moving in a cartesian manner
+								if (this.board.checkFree(fx, fy, ux, uy, dx + dy) == false)
+								{ //There's something in the way
+									return false;
+								}
+								else if (target != null)
+								{ //Moving into a space with an opponent
+									if (target.colour != piece.colour)
+									{ //The target is an opponent
+										return true;
+									}
+								}
+								else
+								{ //moving into an empty space
+									return true;
+								}
+							}
+							
+							break;
+						}
+					case (Piece.Kind.KNIGHT):
+						{
+							if (dx + dy == 3)
+							{ //Moving in a knight-like manner
+								if (target != null)
+								{ //Moving into a space with an opponent
+									if (target.colour != piece.colour)
+									{ //The target is an opponent
+										return true;
+									}
+								}
+								else
+								{ //moving into an empty space
+									return true;
+								}
+							}
+							
+							break;
+						}
+					case (Piece.Kind.BISHOP):
+						{
+							if (dx == dy)
+							{ //Moving in a diagonal manner
+								if (this.board.checkFree(fx, fy, ux, uy, dx) == false)
+								{ //There's something in the way
+									return false;
+								}
+								else if (target != null)
+								{ //Moving into a space with an opponent
+									if (target.colour != piece.colour)
+									{ //The target is an opponent
+										return true;
+									}
+								}
+								else
+								{ //moving into an empty space
+									return true;
+								}
+							}
+							
+							break;
+						}
+					case (Piece.Kind.QUEEN):
+						{
+							if (dx == dy || (dx == 0 || dy == 0))
+							{ //Moving in a diagonal manner
+								bool free = false;
+								
+								if (dx == dy)
+								{ //It's moving like a bishop
+									free = this.board.checkFree(fx, fy, ux, uy, dx);
+								}
+								else
+								{ //It's moving like a rook
+									free = this.board.checkFree(fx, fy, ux, uy, dx + dy);
+								}
+								
+								if (free == false)
+								{ //Route is blocked
+									return false;
+								}
+								else if (target != null)
+								{ //Moving into a space with an opponent
+									if (target.colour != piece.colour)
+									{ //The target is an opponent
+										return true;
+									}
+								}
+								else
+								{ //moving into an empty space
+									return true;
+								}
+							}
+							
+							break;
+						}
+					case (Piece.Kind.KING):
+						{
+							if (int8.max(dx, dy) <= 1 && (dx == dy || (dx == 0 || dy == 0)))
+							{ //Moving in a diagonal manner
+								bool free = false;
+								
+								if (dx == dy)
+								{ //It's moving like a bishop
+									free = this.board.checkFree(fx, fy, ux, uy, dx);
+								}
+								else
+								{ //It's moving like a rook
+									free = this.board.checkFree(fx, fy, ux, uy, dx + dy);
+								}
+								
+								if (free == false)
+								{ //Route is blocked
+									return false;
+								}
+								else if (target != null)
+								{ //Moving into a space with an opponent
+									if (target.colour != piece.colour)
+									{ //The target is an opponent
+										return true;
+									}
+								}
+								else
+								{ //moving into an empty space
+									return true;
+								}
+							}
+							
+							break;
+						}
+					default:
+						return false;
+				}
+				
+				//If all else fails, default to false as a failsafe
+				return false;
 			}
 			
 			public void apply()
 			{
 				if (this.isValid())
 				{
-					this.board.data[this.to_x, this.to_y] = this.board.data[this.from_x, this.from_y];
-					this.board.data[this.from_x, this.from_y] = 0x00;
-				}
-			}
-			
-			public bool isValid()
-			{
-				//Find the piece kind
-				int8 piece = this.getPiece();
-				//Find the colour of the piece
-				Piece.Colour colour;
-				if (piece != 0x00)
-					colour = Piece.pieces[piece].colour;
-				else
-					colour = Piece.Colour.NONE;
-				
-				//VS is the Vector Scalar. Positions are multiplied by this
-				//such that when vs = -1, all checks are done as if the other
-				//side of the board is being played
-				int8 vs;
-				if (colour == Piece.Colour.BLACK)
-					vs = 1;
-				else
-					vs = -1;
-				
-				//Check for each piece kind
-				if ((piece == 0x01 && colour == Piece.Colour.BLACK) || (piece == 0x07 && colour == Piece.Colour.WHITE))
-				{
-					//It's a pawn
-					return true;
-				}
-				else if ((piece == 0x02 && colour == Piece.Colour.BLACK) || (piece == 0x08 && colour == Piece.Colour.WHITE))
-				{
-					//It's a rook
-					return true;
-				}
-				else if ((piece == 0x03 && colour == Piece.Colour.BLACK) || (piece == 0x09 && colour == Piece.Colour.WHITE))
-				{
-					//It's a knight
-					return true;
-				}
-				else if ((piece == 0x04 && colour == Piece.Colour.BLACK) || (piece == 0x0A && colour == Piece.Colour.WHITE))
-				{
-					//It's a bishop
-					return true;
-				}
-				else if ((piece == 0x05 && colour == Piece.Colour.BLACK) || (piece == 0x0B && colour == Piece.Colour.WHITE))
-				{
-					//It's a queen
-					return true;
-				}
-				else if ((piece == 0x06 && colour == Piece.Colour.BLACK) || (piece == 0x0C && colour == Piece.Colour.WHITE))
-				{
-					//It's a king
-					return true;
+					this.board.data[to_x, to_y] = this.board.data[from_x, from_y];
+					this.board.data[from_x, from_y] = 0x00;
 				}
 				else
 				{
-					knightmare.Common.output("Move invalid!");
-					return false; //By default, assume that the move is invalid
+					Common.output("Move validation failed");
 				}
 			}
 		}
