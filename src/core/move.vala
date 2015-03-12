@@ -62,6 +62,11 @@ namespace knightmare
 					return false;
 				}
 				
+				if (piece.colour != this.board.turn)
+				{ //It's not this player's turn
+					return false;
+				}
+				
 				//The vector multiplier - points in the direction of the piece team
 				int8 vm;
 				if (piece.colour == Piece.Colour.BLACK)
@@ -81,6 +86,13 @@ namespace knightmare
 								}
 								else if (dx == 1 && target != null && target.colour != piece.colour)
 								{//Taking a piece diagonally
+									return true;
+								}
+							}
+							else if (ry * vm == 2 && rx == 0 && target == null && ((vm == 1 && fy == 1) || (vm == -1 && fy == 6)))
+							{ //Starting from initial position (jump of 2)
+								if (this.board.checkFree(fx, fy, 0, vm, 2))
+								{ //Nothing in the way
 									return true;
 								}
 							}
@@ -234,6 +246,7 @@ namespace knightmare
 				{
 					this.board.data[to_x, to_y] = this.board.data[from_x, from_y];
 					this.board.data[from_x, from_y] = 0x00;
+					this.board.turn = (this.board.turn == Piece.Colour.BLACK) ? Piece.Colour.WHITE : Piece.Colour.BLACK;
 				}
 				else
 				{

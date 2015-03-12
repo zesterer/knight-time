@@ -5,10 +5,12 @@ namespace knightmare
 		public class Board : Object
 		{
 			public int8[,] data = new int8[8, 8];
+			public Piece.Colour turn;
 			
 			public Board()
 			{
 				this.clear();
+				this.turn = Piece.Colour.WHITE;
 			}
 			
 			public void clear()
