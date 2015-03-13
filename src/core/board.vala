@@ -25,6 +25,67 @@ namespace knightmare
 				}
 			}
 			
+			public void moveRandom()
+			{
+				DynamicList<int16> pieces = this.getPieces(this.turn);
+				DynamicList<Move?> moves = new DynamicList<Move?>();
+				
+				for (int16 count = 0; count < pieces.length; count ++)
+				{
+					DynamicList<Move?> potentials = this.getPieceMoves((int8)(pieces[count] % 256), (int8)(pieces[count] / 256));
+					for (int16 count2 = 0; count2 < potentials.length; count2 ++)
+					{
+						if (potentials[count2].isValid())
+						{
+							moves.add(potentials[count2]);
+						}
+					}
+				}
+				
+				int16 n = (int16)Random.int_range(0, moves.length);
+				moves[n].apply();
+			}
+			
+			public DynamicList<int16> getPieces(Piece.Colour colour)
+			{
+				DynamicList<int16> piece_list = new DynamicList<int16>();
+				
+				for (int8 y = 0; y < 8; y ++)
+				{
+					for (int8 x = 0; x < 8; x ++)
+					{
+						if (this.data[x, y] != 0x00 && Piece.kind[this.data[x, y]].colour == colour)
+						{
+							piece_list.add(y * 256 + x);
+						}
+					}
+				}
+				
+				return piece_list;
+			}
+			
+			public DynamicList<Move?> getPieceMoves(int8 x, int8 y)
+			{
+				DynamicList<Move?> move_list = new DynamicList<Move?>();
+				
+				Move move;
+				
+				for (int8 yy = 0; yy < 8; yy ++)
+				{
+					for (int8 xx = 0; xx < 8; xx ++)
+					{
+						move = new Move(this, x, y, xx, yy);
+						
+						if (move.isValid())
+						{
+							move_list.add(move);
+						}
+					}
+				}
+				
+				return move_list;
+			}
+			
 			public new Board clone()
 			{
 				Board new_board = new Board();

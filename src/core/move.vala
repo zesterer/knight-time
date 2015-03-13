@@ -2,13 +2,22 @@ namespace knightmare
 {
 	namespace Core
 	{
-		public struct Move
+		public class Move
 		{
 			public Board board;
 			public int8 from_x;
 			public int8 from_y;
 			public int8 to_x;
 			public int8 to_y;
+			
+			public Move(Board board, int8 from_x, int8 from_y, int8 to_x, int8 to_y)
+			{
+				this.board = board;
+				this.from_x = from_x;
+				this.from_y = from_y;
+				this.to_x = to_x;
+				this.to_y = to_y;
+			}
 			
 			public int8 getPieceID()
 			{
@@ -32,14 +41,6 @@ namespace knightmare
 			
 			public bool isValid()
 			{
-				//Find the pieces we are moving, and the pieces we are moving to
-				unowned Piece.Piece? piece = this.getPiece();
-				unowned Piece.Piece? target = this.getTarget();
-				
-				//Make sure we're actually trying to move a piece
-				if (piece == null)
-					return false;
-				
 				//Find the movement positions
 				int8 fx = this.from_x; //From x - the x position of the piece being moved
 				int8 fy = this.from_y; //From y - the y position of the piece being moved
@@ -56,6 +57,14 @@ namespace knightmare
 				{ //Coordinates are outside the board
 					return false;
 				}
+				
+				//Find the pieces we are moving, and the pieces we are moving to
+				unowned Piece.Piece? piece = this.getPiece();
+				unowned Piece.Piece? target = this.getTarget();
+				
+				//Make sure we're actually trying to move a piece
+				if (piece == null)
+					return false;
 				
 				if (fx == tx && fy == ty)
 				{ //It's not moved
@@ -124,7 +133,7 @@ namespace knightmare
 						}
 					case (Piece.Kind.KNIGHT):
 						{
-							if (dx + dy == 3)
+							if (dx + dy == 3 && int8.max(dx, dy) == 2)
 							{ //Moving in a knight-like manner
 								if (target != null)
 								{ //Moving into a space with an opponent

@@ -13,14 +13,20 @@ src/core/board.vala \
 src/core/move.vala \
 \
 src/common/common.vala \
+src/common/dynamiclist.vala \
+\
+src/ui/ui.vala \
+src/ui/window.vala \
 
-VALA_PACKAGES=--pkg gtk+-3.0 -X -lm -X -g -X -fsanitize=address
+VALA_PACKAGES=--pkg gtk+-3.0 -X -lm \
+
+VALA_ADDITIONAL=--vapidir=vapi -X -g -X -fsanitize=address
 
 default: build
 
 build: $(VALA_SOURCES)
 	@echo "Building..."
-	@$(VALAC) -o $(NAME) $(VALA_PACKAGES) $(VALA_SOURCES)
+	@$(VALAC) -o $(NAME) $(VALA_PACKAGES) $(VALA_ADDITIONAL) $(VALA_SOURCES)
 	@echo "Built."
 
 install: $(NAME)
@@ -31,6 +37,8 @@ install: $(NAME)
 	@echo "Moved."
 
 run: $(NAME)
+	@echo "Switching library path to library location"
+	set LD_LIBRARY_PATH lib/shared/
 	@echo "Running..."
 	@./$(NAME)
 
