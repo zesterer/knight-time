@@ -1,6 +1,6 @@
 namespace knightmare
 {
-	int mmain(string[] args)
+	int main(string[] args)
 	{
 		//Set the core engine up
 		Core.Piece.setup();
@@ -24,11 +24,8 @@ namespace knightmare
 			if (parts[0] == "exit")
 				break;
 			
-			//Make the move
-			Core.Move move = new Core.Move(game.current_board, (int8)int.parse(parts[0]), (int8)int.parse(parts[1]), (int8)int.parse(parts[2]), (int8)int.parse(parts[3]));
-			move.apply();
-			
-			game.current_board.moveRandom();
+			if (game.current_board.moveRandom() == false)
+				break;
 		}
 		
 		return 0;

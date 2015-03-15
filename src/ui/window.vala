@@ -16,6 +16,7 @@ namespace knightmare
 				
 				this.test_button = new Gtk.Button();
 				this.test_button.set_label("Hello, World!");
+				this.add(this.test_button);
 				
 				this.show_all();
 			}

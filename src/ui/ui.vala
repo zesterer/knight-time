@@ -21,7 +21,7 @@ namespace knightmare
 	}
 }
 
-int main(string[] args)
+int mmain(string[] args)
 {
 	Gtk.init(ref args);
 	

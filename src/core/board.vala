@@ -25,7 +25,7 @@ namespace knightmare
 				}
 			}
 			
-			public void moveRandom()
+			public bool moveRandom()
 			{
 				DynamicList<int16> pieces = this.getPieces(this.turn);
 				DynamicList<Move?> moves = new DynamicList<Move?>();
@@ -42,8 +42,11 @@ namespace knightmare
 					}
 				}
 				
+				if (moves.length < 1)
+					return false;
+				
 				int16 n = (int16)Random.int_range(0, moves.length);
-				moves[n].apply();
+				return moves[n].apply();
 			}
 			
 			public DynamicList<int16> getPieces(Piece.Colour colour)

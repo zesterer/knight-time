@@ -249,17 +249,19 @@ namespace knightmare
 				return false;
 			}
 			
-			public void apply()
+			public bool apply()
 			{
 				if (this.isValid())
 				{
 					this.board.data[to_x, to_y] = this.board.data[from_x, from_y];
 					this.board.data[from_x, from_y] = 0x00;
 					this.board.turn = (this.board.turn == Piece.Colour.BLACK) ? Piece.Colour.WHITE : Piece.Colour.BLACK;
+					return true;
 				}
 				else
 				{
 					Common.output("Move validation failed");
+					return false;
 				}
 			}
 		}

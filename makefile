@@ -37,8 +37,6 @@ install: $(NAME)
 	@echo "Moved."
 
 run: $(NAME)
-	@echo "Switching library path to library location"
-	set LD_LIBRARY_PATH lib/shared/
 	@echo "Running..."
 	@./$(NAME)
 
