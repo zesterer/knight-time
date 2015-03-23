@@ -1,6 +1,6 @@
 # Knightmare
 
-A hastily-written chess game, chess frontend and chess AI written in Vala and SFML.
+A hastily-written chess game, chess frontend and chess AI written in Vala and Gtk.
 
 ## Compile
 
