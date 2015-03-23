@@ -28,18 +28,14 @@ namespace knightmare
 				this.set_halign(Gtk.Align.CENTER);
 				this.set_valign(Gtk.Align.CENTER);
 				
-				this.width_request = (int)this.cell_width * 8;
-				this.height_request = (int)this.cell_width * 8;
+				this.width_request = (int)this.cell_width * 10; //The edges
+				this.height_request = (int)this.cell_width * 10; //The edges
 				
 				this.piece_surface = new Cairo.ImageSurface.from_png("resources/pieces.png");
 			}
 		
 			public bool display(Cairo.Context context)
 			{
-				//Not needed yet
-				//int width = this.get_allocated_width();
-				//int height = this.get_allocated_height();
-			
 				this.drawBoard(context);
 				
 				this.drawPieces(context);
@@ -49,6 +45,17 @@ namespace knightmare
 			
 			public void drawBoard(Cairo.Context context)
 			{
+				//Draw the board border
+				context.rectangle(0, 0, 10 * this.cell_width, 10 * this.cell_width);
+				Gdk.cairo_set_source_rgba(context, {0.7, 0.6, 0.4, 1.0});
+				context.fill();
+				
+				//Draw the board background
+				context.rectangle(this.cell_width, this.cell_width, 8 * this.cell_width, 8 * this.cell_width);
+				Gdk.cairo_set_source_rgba(context, {0.9, 0.8, 0.7, 1.0});
+				context.fill();
+				
+				//Draw the grid
 				for (int pos = 0; pos < 32; pos ++)
 				{
 					int add = 0;
@@ -56,13 +63,42 @@ namespace knightmare
 					if ((pos / 4) % 2 == 0)
 						add = (int)this.cell_width;
 					
-					context.rectangle((pos % 4) * this.cell_width * 2 + add, (pos / 4) * this.cell_width, this.cell_width, this.cell_width);
+					context.rectangle((pos % 4 + 0.5) * this.cell_width * 2 + add, (pos / 4 + 1) * this.cell_width, this.cell_width, this.cell_width);
 				}
-			
-				weak Gtk.StyleContext style_context = this.get_style_context();
-				Gdk.RGBA colour = style_context.get_color(0);
-				Gdk.cairo_set_source_rgba(context, colour);
+				Gdk.cairo_set_source_rgba(context, {0.2, 0.2, 0.2, 1.0});
 				context.fill();
+				
+				//Draw the text
+				context.select_font_face("Sans", Cairo.FontSlant.NORMAL, Cairo.FontWeight.NORMAL);
+				context.set_font_size(40);
+				
+				string[] letters = {"a", "b", "c", "d", "e", "f", "g", "h"};
+				string[] numbers = {"8", "7", "6", "5", "4", "3", "2", "1"};
+				Cairo.TextExtents extents;
+				for (int a = 0; a < letters.length; a ++)
+				{
+					//Draw the letters
+					context.text_extents(letters[a], out extents);
+					
+					//top side
+					context.move_to((a + 1.5) * this.cell_width - (extents.width / 2 + extents.x_bearing), 0.5 * this.cell_width - (extents.height / 2 + extents.y_bearing));
+					context.show_text(letters[a]);
+					
+					//bottom side
+					context.move_to((a + 1.5) * this.cell_width - (extents.width / 2 + extents.x_bearing), 9.5 * this.cell_width - (extents.height / 2 + extents.y_bearing));
+					context.show_text(letters[a]);
+					
+					//Draw the numbers
+					context.text_extents(numbers[a], out extents);
+					
+					//left side
+					context.move_to(0.5 * this.cell_width - (extents.width / 2 + extents.x_bearing), (a + 1.5) * this.cell_width - (extents.height / 2 + extents.y_bearing));
+					context.show_text(numbers[a]);
+					
+					//right side
+					context.move_to(9.5 * this.cell_width - (extents.width / 2 + extents.x_bearing), (a + 1.5) * this.cell_width - (extents.height / 2 + extents.y_bearing));
+					context.show_text(numbers[a]);
+				}
 			}
 			
 			public void drawPieces(Cairo.Context context)
@@ -115,7 +151,7 @@ namespace knightmare
 				Cairo.Surface piece = new Cairo.Surface.for_rectangle(this.piece_surface, pos[0], pos[1] + colour_modifier, 64, 64);
 				
 				context.scale(this.board_scale, this.board_scale);
-				context.set_source_surface(piece, x * 64, y * 64);
+				context.set_source_surface(piece, (x + 1) * 64, (y + 1) * 64);
 				context.scale(1.0 / this.board_scale, 1.0 / this.board_scale);
 				context.paint();
 			}
