@@ -15,6 +15,8 @@ namespace knightmare
 				this.root = this.mother.root;
 				
 				this.title = "Chess Engine";
+				this.resetTitle();
+				this.mother.game.board.updated.connect(this.resetTitle);
 				this.show_close_button = true;
 				
 				this.move_button = new Gtk.Button();
@@ -28,6 +30,19 @@ namespace knightmare
 			public void moveClicked()
 			{
 				this.mother.game.board.moveRandom();
+			}
+			
+			public void resetTitle()
+			{
+				switch(this.mother.game.board.turn)
+				{
+					case (Core.Piece.Colour.WHITE):
+						this.title = "White to play";
+						break;
+					case (Core.Piece.Colour.BLACK):
+						this.title = "Black to play";
+						break;
+				}
 			}
 		}
 	}
