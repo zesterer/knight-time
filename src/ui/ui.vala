@@ -17,16 +17,11 @@ namespace knightmare
 			{
 				Gtk.main();
 			}
+			
+			public void close()
+			{
+				Gtk.main_quit();
+			}
 		}
 	}
-}
-
-int mmain(string[] args)
-{
-	Gtk.init(ref args);
-	
-	knightmare.UI.Application application = new knightmare.UI.Application();
-	application.start();
-	
-	return 0;
 }

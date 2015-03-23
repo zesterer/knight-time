@@ -7,6 +7,8 @@ namespace knightmare
 			public int8[,] data = new int8[8, 8];
 			public Piece.Colour turn;
 			
+			public signal void updated();
+			
 			public Board()
 			{
 				this.clear();

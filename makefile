@@ -17,6 +17,8 @@ src/common/dynamiclist.vala \
 \
 src/ui/ui.vala \
 src/ui/window.vala \
+src/ui/boardarea.vala \
+src/ui/headerbar.vala \
 
 VALA_PACKAGES=--pkg gtk+-3.0 -X -lm \
 

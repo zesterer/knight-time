@@ -256,6 +256,9 @@ namespace knightmare
 					this.board.data[to_x, to_y] = this.board.data[from_x, from_y];
 					this.board.data[from_x, from_y] = 0x00;
 					this.board.turn = (this.board.turn == Piece.Colour.BLACK) ? Piece.Colour.WHITE : Piece.Colour.BLACK;
+					
+					this.board.updated();
+					
 					return true;
 				}
 				else

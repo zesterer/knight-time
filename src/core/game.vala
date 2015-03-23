@@ -4,11 +4,11 @@ namespace knightmare
 	{
 		public class Game : Object
 		{
-			public Board current_board;
+			public Board board;
 			
 			public Game()
 			{
-				this.current_board = new Board();
+				this.board = new Board();
 			}
 		}
 	}
