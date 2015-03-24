@@ -10,7 +10,9 @@ namespace knightmare
 			public Core.Game game;
 			
 			public HeaderBar header_bar;
+			public Gtk.Box main_box;
 			public BoardArea board_area;
+			public ActionBar action_bar;
 			
 			public Window(Application mother)
 			{
@@ -25,9 +27,15 @@ namespace knightmare
 				this.header_bar = new HeaderBar(this);
 				this.set_titlebar(this.header_bar);
 				
+				this.main_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+				this.add(this.main_box);
+				
 				this.board_area = new BoardArea(this);
 				this.game.board.updated.connect(this.board_area.queue_draw);
-				this.add(this.board_area);
+				this.main_box.add(this.board_area);
+				
+				this.action_bar = new ActionBar(this);
+				this.main_box.pack_end(this.action_bar);
 				
 				this.show_all();
 			}

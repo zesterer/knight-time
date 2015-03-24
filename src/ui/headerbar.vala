@@ -20,7 +20,7 @@ namespace knightmare
 				this.show_close_button = true;
 				
 				this.move_button = new Gtk.Button();
-				this.move_button.set_label("Next Move");
+				this.move_button.set_label("Move");
 				this.move_button.clicked.connect(this.moveClicked);
 				this.add(this.move_button);
 				

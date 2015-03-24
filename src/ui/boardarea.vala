@@ -19,19 +19,34 @@ namespace knightmare
 				
 				this.draw.connect(this.display);
 				
-				//Arbitary for now
-				this.cell_width = 64;
-				//64 is the base size
-				this.board_scale = this.cell_width / 64;
+				this.resetResolution(32);
 				
 				//Keep the board in the centre
+				this.set_hexpand(true);
+				this.set_vexpand(true);
 				this.set_halign(Gtk.Align.CENTER);
 				this.set_valign(Gtk.Align.CENTER);
 				
+				this.setPieces();
+			}
+			
+			public void setPieces(string filename = "resources/pieces.png")
+			{
+				this.piece_surface = new Cairo.ImageSurface.from_png(filename);
+			}
+			
+			public void resetResolution(int cell_width)
+			{
+				//Arbitary for now
+				this.cell_width = cell_width;
+				//64 is the base size
+				this.board_scale = this.cell_width / 64;
+				
+				//Set the minimum size of the widget according to the board size
 				this.width_request = (int)this.cell_width * 10; //The edges
 				this.height_request = (int)this.cell_width * 10; //The edges
 				
-				this.piece_surface = new Cairo.ImageSurface.from_png("resources/pieces.png");
+				this.queue_draw();
 			}
 		
 			public bool display(Cairo.Context context)
@@ -70,7 +85,7 @@ namespace knightmare
 				
 				//Draw the text
 				context.select_font_face("Sans", Cairo.FontSlant.NORMAL, Cairo.FontWeight.NORMAL);
-				context.set_font_size(40);
+				context.set_font_size((int)(40.0 * this.board_scale));
 				
 				string[] letters = {"a", "b", "c", "d", "e", "f", "g", "h"};
 				string[] numbers = {"8", "7", "6", "5", "4", "3", "2", "1"};

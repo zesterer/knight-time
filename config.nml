@@ -1,0 +1,6 @@
+{
+	$config;
+	
+	cell-width = 48;
+	tile-filename = resources/newpieces.png;
+}
