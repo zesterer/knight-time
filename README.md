@@ -2,7 +2,7 @@
 
 A hastily-written chess game, chess frontend and chess AI written in Vala and Gtk.
 
-[(https://raw.githubusercontent.com/zesterer/knightmare/master/resources/screenshots/screen.png)]
+[!(https://raw.githubusercontent.com/zesterer/knightmare/master/resources/screenshots/screen.png)]
 
 ## Compile
 
