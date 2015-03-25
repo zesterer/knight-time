@@ -1,5 +1,5 @@
 #The name of the program
-NAME=knight-time
+NAME=knightmare
 
 VALAC=valac
 VALA_SOURCES=\

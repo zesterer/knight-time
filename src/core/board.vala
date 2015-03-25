@@ -95,6 +95,8 @@ namespace knightmare
 			{
 				Board new_board = new Board();
 				
+				new_board.turn = this.turn;
+				
 				for (int8 y = 0; y < 8; y ++)
 				{
 					for (int8 x = 0; x < 8; x ++)
@@ -124,6 +126,8 @@ namespace knightmare
 			{
 				//Clear the board
 				this.clear();
+        
+        this.turn = Piece.Colour.WHITE;
 				
 				//Black pawns
 				for (int8 count = 0; count < 8; count ++)

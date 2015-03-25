@@ -10,6 +10,10 @@ namespace knightmare
 			public double cell_width;
 			public double board_scale;
 			
+			public bool draw_selected = false;
+			public int select_pos_x = 0;
+			public int select_pos_y = 0;
+			
 			Cairo.ImageSurface piece_surface;
 			
 			public BoardArea(Window mother)
@@ -17,6 +21,8 @@ namespace knightmare
 				this.mother = mother;
 				this.root = this.mother.root;
 				
+				this.set_events(Gdk.EventMask.BUTTON_PRESS_MASK);
+				this.button_press_event.connect(this.buttonPress);
 				this.draw.connect(this.display);
 				
 				this.resetResolution(32);
@@ -53,9 +59,52 @@ namespace knightmare
 			{
 				this.drawBoard(context);
 				
+				this.drawSelected(context);
+				
 				this.drawPieces(context);
 			
 				return true;
+			}
+			
+			public bool buttonPress(Gdk.EventButton event)
+			{
+				int pos_x, pos_y;
+				
+				pos_x = (int)(event.x / this.cell_width) - 1;
+				pos_y = (int)(event.y / this.cell_width) - 1;
+				
+				if (pos_x >= 0 && pos_x <= 7 && pos_y >= 0 && pos_y <= 7)
+				{
+					if (!draw_selected)
+					{
+						this.select_pos_x = pos_x;
+						this.select_pos_y = pos_y;
+						
+						this.draw_selected = true;
+					}
+					else
+					{
+						Core.Move move = new Core.Move(this.mother.game.board, (int8)this.select_pos_x, (int8)this.select_pos_y, (int8)pos_x, (int8)pos_y);
+						move.apply();
+						
+						this.draw_selected = false;
+					}
+					
+					this.queue_draw();
+				}
+				
+				return false;
+			}
+			
+			public void drawSelected(Cairo.Context context)
+			{
+				if (draw_selected)
+				{
+					//Draw the board border
+					context.rectangle((this.select_pos_x + 1) * this.cell_width, (this.select_pos_y + 1) * this.cell_width, this.cell_width, this.cell_width);
+					Gdk.cairo_set_source_rgba(context, {0.3, 0.9, 0.3, 0.4});
+					context.fill();
+				}
 			}
 			
 			public void drawBoard(Cairo.Context context)

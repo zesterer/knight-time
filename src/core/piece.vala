@@ -47,7 +47,7 @@ namespace knightmare
 						case (Kind.QUEEN):
 							return 9;
 						case (Kind.KING):
-							return 5000;
+							return 5000; //Some arbitarily large number
 						default:
 							return 1;
 					}
