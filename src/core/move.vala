@@ -71,11 +71,6 @@ namespace knightmare
 					return false;
 				}
 				
-				if (piece.colour != this.board.turn)
-				{ //It's not this player's turn
-					return false;
-				}
-				
 				//The vector multiplier - points in the direction of the piece team
 				int8 vm;
 				if (piece.colour == Piece.Colour.BLACK)
@@ -249,15 +244,56 @@ namespace knightmare
 				return false;
 			}
 			
+			public bool isValidWithTurn()
+			{
+				unowned Piece.Piece? piece = this.getPiece();
+				
+				if (piece == null)
+					return false;
+				
+				if (piece.colour != this.board.turn)
+					return false;
+				
+				return this.isValid();
+			}
+			
+			public bool isValidWithCheck()
+			{
+				Board board = this.board.clone();
+				Move move = new Move(board, this.from_x, this.from_y, this.to_x, this.to_y);
+				move.applyNoCheck();
+				
+				if (board.isInCheck(this.getPiece().colour))
+					return false;
+				
+				return true;
+			}
+			
+			public void applyNoCheck()
+			{
+				this.board.data[to_x, to_y] = this.board.data[from_x, from_y];
+				this.board.data[from_x, from_y] = 0x00;
+				this.board.turn = (this.board.turn == Piece.Colour.BLACK) ? Piece.Colour.WHITE : Piece.Colour.BLACK;
+				this.board.not_turn = (this.board.not_turn == Piece.Colour.BLACK) ? Piece.Colour.WHITE : Piece.Colour.BLACK;
+				
+				this.board.updated();
+			}
+			
 			public bool apply()
 			{
-				if (this.isValid())
+				if (this.isValidWithTurn())
 				{
-					this.board.data[to_x, to_y] = this.board.data[from_x, from_y];
-					this.board.data[from_x, from_y] = 0x00;
-					this.board.turn = (this.board.turn == Piece.Colour.BLACK) ? Piece.Colour.WHITE : Piece.Colour.BLACK;
+					Board board = this.board.clone();
+					Move move = new Move(board, this.from_x, this.from_y, this.to_x, this.to_y);
+					move.applyNoCheck();
 					
-					this.board.updated();
+					if (!this.isValidWithCheck())
+					{
+						stdout.printf("WE'RE IN CHECK!\n");
+						return false;
+					}
+					
+					this.applyNoCheck();
 					
 					return true;
 				}

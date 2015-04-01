@@ -13,6 +13,7 @@ namespace knightmare
 			public bool draw_selected = false;
 			public int select_pos_x = 0;
 			public int select_pos_y = 0;
+			public DynamicList<Core.Move> potential_moves;
 			
 			Cairo.ImageSurface piece_surface;
 			
@@ -81,6 +82,8 @@ namespace knightmare
 						this.select_pos_y = pos_y;
 						
 						this.draw_selected = true;
+						
+						this.potential_moves = this.mother.game.board.getPieceMoves((int8)this.select_pos_x, (int8)this.select_pos_y);
 					}
 					else
 					{
@@ -102,8 +105,20 @@ namespace knightmare
 				{
 					//Draw the board border
 					context.rectangle((this.select_pos_x + 1) * this.cell_width, (this.select_pos_y + 1) * this.cell_width, this.cell_width, this.cell_width);
-					Gdk.cairo_set_source_rgba(context, {0.3, 0.9, 0.3, 0.4});
+					Gdk.cairo_set_source_rgba(context, {0.4, 0.3, 0.3, 0.4});
 					context.fill();
+					
+					for (int count = 0; count < this.potential_moves.length; count ++)
+					{
+						if (this.mother.game.board.data[this.potential_moves[count].to_x, this.potential_moves[count].to_y] != 0x00)
+							Gdk.cairo_set_source_rgba(context, {0.3, 0.6, 0.6, 0.4});
+						else
+							Gdk.cairo_set_source_rgba(context, {0.3, 0.6, 0.3, 0.4});
+						
+						//Draw the board border
+						context.rectangle((this.potential_moves[count].to_x + 1) * this.cell_width, (this.potential_moves[count].to_y + 1) * this.cell_width, this.cell_width, this.cell_width);
+						context.fill();
+					}
 				}
 			}
 			

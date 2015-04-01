@@ -6,6 +6,7 @@ namespace knightmare
 		{
 			public int8[,] data = new int8[8, 8];
 			public Piece.Colour turn;
+			public Piece.Colour not_turn;
 			
 			public signal void updated();
 			
@@ -13,6 +14,7 @@ namespace knightmare
 			{
 				this.clear();
 				this.turn = Piece.Colour.WHITE;
+				this.not_turn = Piece.Colour.BLACK;
 			}
 			
 			public void clear()
@@ -27,14 +29,14 @@ namespace knightmare
 				}
 			}
 			
-			public bool moveRandom()
+			public DynamicList<Core.Move> getPossibleMoves(Core.Piece.Colour colour = this.turn)
 			{
-				DynamicList<int16> pieces = this.getPieces(this.turn);
+				DynamicList<int16> pieces = this.getPieces(colour);
 				DynamicList<Move?> moves = new DynamicList<Move?>();
 				
 				for (int16 count = 0; count < pieces.length; count ++)
 				{
-					DynamicList<Move?> potentials = this.getPieceMoves((int8)(pieces[count] % 256), (int8)(pieces[count] / 256));
+					DynamicList<Move?> potentials = this.getPieceMovesIgnoreCheck((int8)(pieces[count] % 256), (int8)(pieces[count] / 256));
 					for (int16 count2 = 0; count2 < potentials.length; count2 ++)
 					{
 						if (potentials[count2].isValid())
@@ -44,11 +46,60 @@ namespace knightmare
 					}
 				}
 				
+				return moves;
+			}
+			
+			public bool moveRandom()
+			{
+				DynamicList<Core.Move> moves = this.getPossibleMoves();
+				
 				if (moves.length < 1)
 					return false;
 				
 				int16 n = (int16)Random.int_range(0, moves.length);
 				return moves[n].apply();
+			}
+			
+			public bool isInCheck(Core.Piece.Colour colour = this.turn)
+			{
+				DynamicList<Core.Move> potential_moves;
+				
+				Core.Piece.Colour opposite;
+				
+				if (colour == Core.Piece.Colour.BLACK)
+					opposite = Core.Piece.Colour.WHITE;
+				else
+					opposite = Core.Piece.Colour.BLACK;
+				
+				potential_moves = this.getPossibleMoves(opposite);
+				
+				//Find the king location
+				for (int8 x = 0; x < 8; x ++)
+				{
+					for (int8 y = 0; y < 8; y ++)
+					{
+						Core.Piece.Piece? piece = Core.Piece.kind[this.data[x, y]];
+						if (piece != null)
+						{
+							if (piece.colour == colour && piece.kind == Core.Piece.Kind.KING)
+							{
+								//stdout.printf("Found the king at %s, %s!\n", x.to_string(), y.to_string());
+							
+								for (int count = 0; count < potential_moves.length; count ++)
+								{
+									//stdout.printf("Checked\n");
+									
+									if (potential_moves[count].to_x == x && potential_moves[count].to_y == y)
+									{
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				return false;
 			}
 			
 			public DynamicList<int16> getPieces(Piece.Colour colour)
@@ -69,7 +120,7 @@ namespace knightmare
 				return piece_list;
 			}
 			
-			public DynamicList<Move?> getPieceMoves(int8 x, int8 y)
+			public DynamicList<Move?> getPieceMovesIgnoreCheck(int8 x, int8 y)
 			{
 				DynamicList<Move?> move_list = new DynamicList<Move?>();
 				
@@ -82,6 +133,28 @@ namespace knightmare
 						move = new Move(this, x, y, xx, yy);
 						
 						if (move.isValid())
+						{
+							move_list.add(move);
+						}
+					}
+				}
+				
+				return move_list;
+			}
+			
+			public DynamicList<Move?> getPieceMoves(int8 x, int8 y)
+			{
+				DynamicList<Move?> move_list = new DynamicList<Move?>();
+				
+				Move move;
+				
+				for (int8 yy = 0; yy < 8; yy ++)
+				{
+					for (int8 xx = 0; xx < 8; xx ++)
+					{
+						move = new Move(this, x, y, xx, yy);
+						
+						if (move.isValid() && move.isValidWithCheck())
 						{
 							move_list.add(move);
 						}
