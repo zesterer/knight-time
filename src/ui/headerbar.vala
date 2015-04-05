@@ -9,6 +9,9 @@ namespace knightmare
 			
 			public Gtk.Button move_button;
 			
+			public Gtk.Button config_button;
+			public ConfigPopover config_popover;
+			
 			public HeaderBar(Window mother)
 			{
 				this.mother = mother;
@@ -23,6 +26,12 @@ namespace knightmare
 				this.move_button.set_label("Move");
 				this.move_button.clicked.connect(this.moveClicked);
 				this.add(this.move_button);
+				
+				this.config_button = new Gtk.Button.from_icon_name("preferences-system-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+				this.pack_end(this.config_button);
+				
+				this.config_popover = new ConfigPopover(this, this.config_button);
+				this.config_button.clicked.connect(this.config_popover.toggleShow);
 				
 				this.show_all();
 			}

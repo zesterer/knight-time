@@ -21,10 +21,12 @@ src/ui/window.vala \
 src/ui/boardarea.vala \
 src/ui/headerbar.vala \
 src/ui/actionbar.vala \
+src/ui/configpopover.vala \
 
 VALA_PACKAGES=--pkg gtk+-3.0 -X -lm \
 
-VALA_ADDITIONAL=--vapidir=vapi -X -g -X -fsanitize=address
+VALA_ADDITIONAL=--vapidir=vap
+# -X -g -X -fsanitize=address
 
 LINES_VALA=`( find src -name '*.vala' -print0 | xargs -0 cat ) | wc -l`
 

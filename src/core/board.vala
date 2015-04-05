@@ -39,7 +39,7 @@ namespace knightmare
 					DynamicList<Move?> potentials = this.getPieceMovesIgnoreCheck((int8)(pieces[count] % 256), (int8)(pieces[count] / 256));
 					for (int16 count2 = 0; count2 < potentials.length; count2 ++)
 					{
-						if (potentials[count2].isValid())
+						if (potentials[count2].isValidPotential())
 						{
 							moves.add(potentials[count2]);
 						}
@@ -87,8 +87,6 @@ namespace knightmare
 							
 								for (int count = 0; count < potential_moves.length; count ++)
 								{
-									//stdout.printf("Checked\n");
-									
 									if (potential_moves[count].to_x == x && potential_moves[count].to_y == y)
 									{
 										return true;
@@ -132,7 +130,7 @@ namespace knightmare
 					{
 						move = new Move(this, x, y, xx, yy);
 						
-						if (move.isValid())
+						if (move.isValidPotential())
 						{
 							move_list.add(move);
 						}
@@ -154,7 +152,7 @@ namespace knightmare
 					{
 						move = new Move(this, x, y, xx, yy);
 						
-						if (move.isValid() && move.isValidWithCheck())
+						if (move.isValidPotential() && move.isValidWithCheck())
 						{
 							move_list.add(move);
 						}

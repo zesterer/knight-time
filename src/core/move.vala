@@ -39,7 +39,7 @@ namespace knightmare
 				return Piece.kind[this.getTargetID()];
 			}
 			
-			public bool isValid()
+			public bool isValidPotential()
 			{
 				//Find the movement positions
 				int8 fx = this.from_x; //From x - the x position of the piece being moved
@@ -254,7 +254,7 @@ namespace knightmare
 				if (piece.colour != this.board.turn)
 					return false;
 				
-				return this.isValid();
+				return this.isValidPotential();
 			}
 			
 			public bool isValidWithCheck()
