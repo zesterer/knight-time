@@ -152,7 +152,7 @@ namespace knightmare
 					{
 						move = new Move(this, x, y, xx, yy);
 						
-						if (move.isValidPotential() && move.isValidWithCheck())
+						if (move.isValidWithTurn() && move.isValidWithCheck())
 						{
 							move_list.add(move);
 						}
