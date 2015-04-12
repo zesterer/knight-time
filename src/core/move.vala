@@ -276,6 +276,11 @@ namespace knightmare
 				this.board.turn = (this.board.turn == Piece.Colour.BLACK) ? Piece.Colour.WHITE : Piece.Colour.BLACK;
 				this.board.not_turn = (this.board.not_turn == Piece.Colour.BLACK) ? Piece.Colour.WHITE : Piece.Colour.BLACK;
 				
+				if (this.board.turn == Piece.Colour.BLACK)
+					stdout.printf("Switched to black.\n");
+				else
+					stdout.printf("Switched to white.\n");
+				
 				this.board.updated();
 			}
 			
@@ -283,9 +288,9 @@ namespace knightmare
 			{
 				if (this.isValidWithTurn())
 				{
-					Board board = this.board.clone();
-					Move move = new Move(board, this.from_x, this.from_y, this.to_x, this.to_y);
-					move.applyNoCheck();
+					//Board board = this.board.clone();
+					//Move move = new Move(board, this.from_x, this.from_y, this.to_x, this.to_y);
+					//move.applyNoCheck();
 					
 					if (!this.isValidWithCheck())
 					{

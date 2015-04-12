@@ -89,6 +89,8 @@ namespace knightmare
 								{
 									if (potential_moves[count].to_x == x && potential_moves[count].to_y == y)
 									{
+										stdout.printf("THE 
+SYSTEM IS IN CHECK\n");
 										return true;
 									}
 								}
